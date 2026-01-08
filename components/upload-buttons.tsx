@@ -7,9 +7,31 @@ import { Button } from "@/components/ui/button"
 import { Upload, FileText, Loader2, CheckCircle2, AlertCircle } from "lucide-react"
 import { mockLoanData } from "@/lib/mock-data"
 import { toast } from "sonner"
+import { Progress } from "@/components/ui/progress"
+import { getFileContent } from "@/lib/file-processor"
 
 interface UploadButtonsProps {
   onDataLoaded: (data: any) => void
+}
+
+type ConversionStage = "idle" | "extracting" | "parsing" | "converting" | "complete" | "error"
+
+const stageLabels: Record<ConversionStage, string> = {
+  idle: "Ready",
+  extracting: "Extracting text from document...",
+  parsing: "Parsing document structure...",
+  converting: "Converting to LoanJSON format...",
+  complete: "Complete",
+  error: "Error",
+}
+
+const stageProgress: Record<ConversionStage, number> = {
+  idle: 0,
+  extracting: 25,
+  parsing: 50,
+  converting: 75,
+  complete: 100,
+  error: 0,
 }
 
 export function UploadButtons({ onDataLoaded }: UploadButtonsProps) {
@@ -18,7 +40,27 @@ export function UploadButtons({ onDataLoaded }: UploadButtonsProps) {
     type: null,
     message: "",
   })
+  const [stage, setStage] = useState<ConversionStage>("idle")
+  const [progress, setProgress] = useState(0)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const simulateProgress = async (totalDuration: number) => {
+    const stages: ConversionStage[] = ["extracting", "parsing", "converting"]
+    const stageDuration = totalDuration / stages.length
+
+    for (let i = 0; i < stages.length; i++) {
+      setStage(stages[i])
+      const startProgress = stageProgress[stages[i - 1] ?? "idle"]
+      const endProgress = stageProgress[stages[i]]
+      const steps = 20
+
+      for (let step = 0; step < steps; step++) {
+        await new Promise((resolve) => setTimeout(resolve, stageDuration / steps))
+        const currentProgress = startProgress + ((endProgress - startProgress) / steps) * step
+        setProgress(currentProgress)
+      }
+    }
+  }
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -26,9 +68,14 @@ export function UploadButtons({ onDataLoaded }: UploadButtonsProps) {
 
     setIsUploading(true)
     setStatus({ type: null, message: "" })
+    setStage("extracting")
+    setProgress(0)
 
     try {
-      const content = await file.text()
+      // Start progress simulation
+      const progressPromise = simulateProgress(3000)
+
+      const content = await getFileContent(file)
 
       const response = await fetch("/api/convert-loan", {
         method: "POST",
@@ -42,19 +89,42 @@ export function UploadButtons({ onDataLoaded }: UploadButtonsProps) {
 
       const result = await response.json()
 
+      // Wait for progress animation to complete
+      await progressPromise
+
       if (result.success) {
+        setStage("complete")
+        setProgress(100)
         onDataLoaded(result.data)
         setStatus({ type: "success", message: result.message })
-        toast.success(result.message)
+
+        setTimeout(() => {
+          toast.success("✓ AI Analysis complete - MNEE settlement ready", {
+            description: `Converted ${file.name} to LoanJSON format`,
+          })
+        }, 300)
       } else {
         throw new Error(result.error || "Invalid or unsupported loan document")
       }
     } catch (error: any) {
-      setStatus({ type: "error", message: error.message })
-      toast.error(error.message)
+      console.error("[v0] Upload error:", error)
+      setStage("error")
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      setProgress(0)
+      setStatus({ type: "error", message: "Using sample loan data" })
+      toast.error("File could not be processed", {
+        description: "Loading sample MNEE loan data instead",
+      })
+      onDataLoaded(mockLoanData)
     } finally {
       setIsUploading(false)
       if (fileInputRef.current) fileInputRef.current.value = ""
+
+      // Reset progress UI after 2 seconds
+      setTimeout(() => {
+        setStage("idle")
+        setProgress(0)
+      }, 2000)
     }
   }
 
@@ -72,7 +142,7 @@ export function UploadButtons({ onDataLoaded }: UploadButtonsProps) {
           ref={fileInputRef}
           onChange={handleFileUpload}
           className="hidden"
-          accept=".json,.pdf,.docx,.txt"
+          accept=".json,.pdf,.txt,.docx"
         />
         <Button
           variant="outline"
@@ -89,7 +159,47 @@ export function UploadButtons({ onDataLoaded }: UploadButtonsProps) {
         </Button>
       </div>
 
-      {status.type && (
+      {isUploading && (
+        <div className="space-y-3 p-4 rounded-lg bg-muted/50 border border-primary/20">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                <span className="terminal-text text-sm font-medium text-foreground">AI Analysis in Progress</span>
+              </div>
+              <span className="terminal-text text-xs text-muted-foreground">{Math.round(progress)}%</span>
+            </div>
+            <Progress value={progress} className="h-2" />
+          </div>
+
+          <div className="space-y-2">
+            {Object.entries(stageLabels).map(([stageKey, label]) => {
+              const isActive = stage === stageKey
+              const isComplete = stageProgress[stage as ConversionStage] >= stageProgress[stageKey as ConversionStage]
+
+              return (
+                <div
+                  key={stageKey}
+                  className={`flex items-center gap-3 text-xs terminal-text transition-all ${
+                    isActive
+                      ? "text-primary font-medium"
+                      : isComplete
+                        ? "text-success"
+                        : "text-muted-foreground opacity-50"
+                  }`}
+                >
+                  <div className="w-4 h-4 rounded-full border border-current flex items-center justify-center">
+                    {isComplete && <div className="w-2 h-2 rounded-full bg-current" />}
+                  </div>
+                  <span>{label}</span>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {status.type && !isUploading && (
         <div
           className={`flex items-center gap-2 text-sm font-medium p-3 rounded-lg border ${
             status.type === "success"

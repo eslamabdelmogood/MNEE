@@ -9,13 +9,48 @@ interface LoanOverviewProps {
 }
 
 export function LoanOverview({ data }: LoanOverviewProps) {
+  if (!data || !data.loan_id) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-3xl font-bold tracking-tight text-balance">Loan Overview</h2>
+            <p className="text-muted-foreground mt-1">Waiting for loan data...</p>
+          </div>
+        </div>
+        <Card className="p-12 text-center">
+          <div className="space-y-4">
+            <div className="flex justify-center">
+              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center animate-pulse">
+                <Building2 className="h-6 w-6 text-primary/50" />
+              </div>
+            </div>
+            <p className="text-lg font-medium text-muted-foreground">Waiting for data</p>
+            <p className="text-sm text-muted-foreground">Upload a loan file or load sample data to begin</p>
+          </div>
+        </Card>
+      </div>
+    )
+  }
+
   const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: currency,
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount)
+    const validCurrency = currency && currency !== "N/A" ? currency : "EUR"
+    try {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: validCurrency,
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(amount)
+    } catch (error) {
+      // Fallback for any invalid currency codes
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "EUR",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(amount)
+    }
   }
 
   const getRiskColor = (score: number) => {
