@@ -1,15 +1,15 @@
-##🚀 MNEE-Loan AI Terminal:
+## 🚀 MNEE-Loan AI Terminal:
 
 The New Standard for Programmable Debt & Automated Financial Settlements.
 -------------------------------------------------------------------------------------------------------------------------
 
-##📖 Overview:
+## 📖 Overview:
 
 MNEE-Loan AI is a next-generation banking terminal designed to bridge the gap between static, manual loan documentation and the future of autonomous finance. By transforming complex loan contracts into a unified LoanJSON standard, our platform enables AI Agents and Smart Contracts to execute automated debt settlements using the MNEE Stablecoin.
 
 ------------------------------------------------------------------------------------------------------------------------------
 
-##🔴 The Problem:
+## 🔴 The Problem:
 
 The traditional loan market is broken:
 
@@ -22,7 +22,7 @@ Settlement Latency: Loan disbursements and repayments take days to settle via tr
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-##✅ Our Solution: The Triple-Layer Framework:
+## ✅ Our Solution: The Triple-Layer Framework:
 
 Instruction Layer (LoanJSON AI): We use Google's Gemini-powered AI to extract and standardize loan covenants into a machine-readable JSON format.
 
@@ -35,7 +35,7 @@ Settlement Layer (Smart Contracts): Payments are auto-triggered based on the Loa
 
 
 
-##🛠 Key Features:
+## 🛠 Key Features:
 
 AI-Powered Ingestion: Upload PDF loan agreements and get instant JSON standardization.
 
@@ -54,7 +54,7 @@ Programmable JSON Payloads: View and copy blockchain-ready payloads for any loan
 
 
 
-##💻 Tech Stack:
+## 💻 Tech Stack:
 
 Frontend: Next.js 14, Tailwind CSS, Lucide Icons.
 
@@ -69,7 +69,7 @@ Deployment: Vercel / v0.dev.
 
 
 
-##🚀 How it Works:
+## 🚀 How it Works:
 
 Standardize: A raw loan document is converted into LoanJSON.
 
