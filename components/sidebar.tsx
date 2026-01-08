@@ -24,18 +24,18 @@ export function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
         <button
           onClick={() => onSectionChange("overview")}
           className={cn(
-            "w-full flex items-center justify-center gap-2 px-4 py-4 mb-4 rounded-lg font-bold text-sm transition-all duration-200",
+            "w-full flex flex-col items-center justify-center gap-3 px-4 py-6 mb-6 rounded-lg font-bold text-lg transition-all duration-300 border-2",
             activeSection === "overview"
-              ? "bg-gradient-to-r from-terminal-cyan to-terminal-green text-black shadow-lg shadow-terminal-cyan/50"
-              : "bg-mnee-green/20 text-mnee-green hover:bg-mnee-green/40 border-2 border-mnee-green hover:shadow-md hover:shadow-mnee-green/30",
+              ? "bg-gradient-to-r from-terminal-cyan via-terminal-green to-terminal-cyan text-black shadow-2xl shadow-terminal-cyan/60 animate-pulse border-terminal-green"
+              : "bg-terminal-green/20 text-terminal-green hover:bg-terminal-green/40 border-terminal-green hover:shadow-xl hover:shadow-terminal-green/50 hover:scale-105",
           )}
         >
-          <Home className="h-5 w-5" />
-          <span>MAIN DASHBOARD</span>
+          <Home className="h-8 w-8" />
+          <span className="uppercase tracking-widest text-center leading-tight">← Back to Home</span>
         </button>
 
-        {/* Divider line */}
-        <div className="h-px bg-gradient-to-r from-terminal-cyan/30 via-mnee-green/30 to-transparent mb-4" />
+        {/* Visual divider */}
+        <div className="h-1.5 bg-gradient-to-r from-terminal-cyan/40 via-terminal-green/40 to-transparent mb-4 rounded-full" />
 
         {sections.map((section) => {
           const Icon = section.icon
