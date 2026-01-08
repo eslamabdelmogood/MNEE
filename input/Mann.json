@@ -1,0 +1,14 @@
+{
+  "loan_agreement": {
+    "lender": "MNEE Capital Institutional Fund",
+    "borrower": "TechFlow Solutions Inc.",
+    "amount": 50000,
+    "currency": "MNEE",
+    "interest_rate": "5%",
+    "start_date": "2024-10-01",
+    "end_date": "2025-10-01",
+    "monthly_installment": 4375,
+    "collateral": "Digital Assets",
+    "smart_contract_status": "Ready_for_Settlement"
+  }
+}
