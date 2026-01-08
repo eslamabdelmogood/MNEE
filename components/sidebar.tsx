@@ -9,7 +9,6 @@ interface SidebarProps {
 
 export function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
   const sections = [
-    { id: "overview", label: "Main Dashboard", icon: Home },
     { id: "loanjson", label: "LoanJSON Viewer", icon: FileJson },
     { id: "timeline", label: "Event Timeline", icon: Clock },
     { id: "insights", label: "AI Insights", icon: Sparkles },
@@ -22,44 +21,39 @@ export function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
   return (
     <aside className="fixed left-0 top-20 h-[calc(100vh-5rem)] w-64 border-r border-border bg-card overflow-y-auto">
       <nav className="flex flex-col gap-0 p-2">
-        {sections.map((section, index) => {
+        <button
+          onClick={() => onSectionChange("overview")}
+          className={cn(
+            "w-full flex items-center justify-center gap-2 px-4 py-4 mb-4 rounded-lg font-bold text-sm transition-all duration-200",
+            activeSection === "overview"
+              ? "bg-gradient-to-r from-terminal-cyan to-terminal-green text-black shadow-lg shadow-terminal-cyan/50"
+              : "bg-mnee-green/20 text-mnee-green hover:bg-mnee-green/40 border-2 border-mnee-green hover:shadow-md hover:shadow-mnee-green/30",
+          )}
+        >
+          <Home className="h-5 w-5" />
+          <span>MAIN DASHBOARD</span>
+        </button>
+
+        {/* Divider line */}
+        <div className="h-px bg-gradient-to-r from-terminal-cyan/30 via-mnee-green/30 to-transparent mb-4" />
+
+        {sections.map((section) => {
           const Icon = section.icon
-          const isHome = section.id === "overview"
 
           return (
-            <div key={section.id}>
-              {/* Add separator after home button */}
-              {isHome && index === 0 && (
-                <button
-                  onClick={() => onSectionChange(section.id)}
-                  className={cn(
-                    "w-full flex items-center gap-3 px-3 py-3 text-[12px] terminal-heading transition-colors border-l-4 mb-2 font-bold",
-                    activeSection === section.id
-                      ? "bg-terminal-cyan/20 text-terminal-cyan border-terminal-cyan shadow-sm shadow-terminal-cyan/50"
-                      : "text-mnee-text border-mnee-green bg-mnee-green/10 hover:bg-mnee-green/20 hover:text-mnee-green",
-                  )}
-                >
-                  <Icon className="h-4 w-4" />
-                  {section.label}
-                </button>
+            <button
+              key={section.id}
+              onClick={() => onSectionChange(section.id)}
+              className={cn(
+                "flex items-center gap-3 px-3 py-2 text-[11px] terminal-heading transition-colors border-l-2 mb-1 rounded",
+                activeSection === section.id
+                  ? "bg-primary/20 text-terminal-amber border-terminal-amber"
+                  : "text-muted-foreground border-transparent hover:bg-accent/50 hover:text-foreground",
               )}
-
-              {/* Rest of navigation items */}
-              {!isHome && (
-                <button
-                  onClick={() => onSectionChange(section.id)}
-                  className={cn(
-                    "flex items-center gap-3 px-3 py-2 text-[11px] terminal-heading transition-colors border-l-2 mb-1",
-                    activeSection === section.id
-                      ? "bg-primary/20 text-terminal-amber border-terminal-amber"
-                      : "text-muted-foreground border-transparent hover:bg-accent/50 hover:text-foreground",
-                  )}
-                >
-                  <Icon className="h-3.5 w-3.5" />
-                  {section.label}
-                </button>
-              )}
-            </div>
+            >
+              <Icon className="h-3.5 w-3.5" />
+              {section.label}
+            </button>
           )
         })}
       </nav>
