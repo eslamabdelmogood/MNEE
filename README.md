@@ -99,4 +99,26 @@ Settle: The MNEE Smart Contract executes the payment automatically on the due da
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+## How to test or try it:
+
+1- open the repository: 
+
+https://github.com/eslamabdelmogood/MNEE/tree/main
+
+2-Search for a folder named : input
+
+3-Download the file inside. file name : LOAN AGREEMENT SUMMARY Lender.pdf
+
+4- Open the website using this link :
+
+https://v0-v0loanjsonaidashboardmain-uc.vercel.app/
+
+5-Click on the icon 'upload leaon file ' and upload file 'LOAN AGREEMENT SUMMARY Lender.pdf'
+
+6-click on AI INSIGHTS in left bar bottom overview
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 
